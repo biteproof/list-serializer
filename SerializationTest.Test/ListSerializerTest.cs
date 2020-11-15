@@ -18,7 +18,7 @@ namespace SerializationTest.Test
             using var stream = new MemoryStream();
             serializer.Serialize(rootNode, stream);
 
-            var deserializedNode = (serializer.Deserialize(stream)).GetAwaiter().GetResult();
+            var deserializedNode = serializer.Deserialize(stream).GetAwaiter().GetResult();
 
             while (deserializedNode.Next != null)
             {
@@ -35,7 +35,7 @@ namespace SerializationTest.Test
             var rootNode = CreateLinkedList();
             
             var serializer = new ListSerializer();
-            var nodeCopy = (serializer.DeepCopy(rootNode)).GetAwaiter().GetResult();
+            var nodeCopy = serializer.DeepCopy(rootNode).GetAwaiter().GetResult();
 
             while (nodeCopy.Next != null)
             {
@@ -61,7 +61,7 @@ namespace SerializationTest.Test
                 var formatter = new BinaryFormatter();
                  
                 formatter.Serialize(anotherStream, new [] {"some","data", "123"});
-                Assert.Throws<ArgumentException>(() => (serializer.Deserialize(anotherStream)).GetAwaiter().GetResult());
+                Assert.Throws<ArgumentException>(() => serializer.Deserialize(anotherStream).GetAwaiter().GetResult());
             }
         }
 
