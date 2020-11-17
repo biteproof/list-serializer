@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using SerializationTest.Models;
+using System.Text.Json;
 
 namespace SerializationTest
 {
@@ -15,7 +16,16 @@ namespace SerializationTest
             var formatter = new BinaryFormatter();
             try
             {
-                formatter.Serialize(s,head);
+                var options = new JsonSerializerOptions 
+                {
+                };
+
+                await JsonSerializer.SerializeAsync(s, head, typeof(ListNode), options);
+
+                s.Position = beforeSerialization;
+                var test = await JsonSerializer.DeserializeAsync(s, typeof(ListNode), options);
+
+
             }
             catch
             { // return stream back to it's original state

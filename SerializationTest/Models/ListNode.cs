@@ -2,7 +2,6 @@
 
 namespace SerializationTest.Models
 {
-    [Serializable]
     public  class ListNode
     {
         /// <summary>

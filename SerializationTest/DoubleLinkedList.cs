@@ -20,7 +20,7 @@ namespace SerializationTest
         {
             var newNode = new ListNode
             {
-                Previous = prevNode,
+               // Previous = prevNode,
                 Next = prevNode.Next,
                 Data = payload
             };
