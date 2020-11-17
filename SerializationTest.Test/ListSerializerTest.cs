@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
+using System.Threading.Tasks;
 using SerializationTest.Models;
 using Xunit;
 
@@ -9,16 +11,16 @@ namespace SerializationTest.Test
     public class ListSerializerTest
     {
         [Fact]
-        private void CheckSerializeAndDeserialize()
+        private async Task CheckSerializeAndDeserialize()
         {
             var rootNode = CreateLinkedList();
             
             var serializer = new ListSerializer();
             
             using var stream = new MemoryStream();
-            serializer.Serialize(rootNode, stream);
+            await serializer.Serialize(rootNode, stream);
 
-            var deserializedNode = serializer.Deserialize(stream).GetAwaiter().GetResult();
+            var deserializedNode = await serializer.Deserialize(stream);
 
             while (deserializedNode.Next != null)
             {
@@ -30,12 +32,12 @@ namespace SerializationTest.Test
         }
 
         [Fact]
-        private void CheckDeepCopy()
+        private async Task CheckDeepCopy()
         {
             var rootNode = CreateLinkedList();
             
             var serializer = new ListSerializer();
-            var nodeCopy = serializer.DeepCopy(rootNode).GetAwaiter().GetResult();
+            var nodeCopy = await serializer.DeepCopy(rootNode);
 
             while (nodeCopy.Next != null)
             {
@@ -47,7 +49,7 @@ namespace SerializationTest.Test
         }
         
         [Fact]
-        private void CheckDeserializeException()
+        private async Task CheckDeserializeException()
         {
             var serializer = new ListSerializer();
 
@@ -55,12 +57,12 @@ namespace SerializationTest.Test
             
             using (var stream = new MemoryStream())
             {
-                serializer.Serialize(rootNode, stream);
+                await serializer.Serialize(rootNode, stream);
                  
                 using var anotherStream = new MemoryStream();
-                var formatter = new BinaryFormatter();
+                var options = new JsonSerializerOptions { IncludeFields = true };
+                await JsonSerializer.SerializeAsync(anotherStream, new [] {"some","data", "123"}, typeof(string[]), options);
                  
-                formatter.Serialize(anotherStream, new [] {"some","data", "123"});
                 Assert.Throws<ArgumentException>(() => serializer.Deserialize(anotherStream).GetAwaiter().GetResult());
             }
         }

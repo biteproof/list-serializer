@@ -16,16 +16,8 @@ namespace SerializationTest
             var formatter = new BinaryFormatter();
             try
             {
-                var options = new JsonSerializerOptions 
-                {
-                };
-
+                var options = new JsonSerializerOptions { IncludeFields = true };
                 await JsonSerializer.SerializeAsync(s, head, typeof(ListNode), options);
-
-                s.Position = beforeSerialization;
-                var test = await JsonSerializer.DeserializeAsync(s, typeof(ListNode), options);
-
-
             }
             catch
             { // return stream back to it's original state
@@ -41,7 +33,9 @@ namespace SerializationTest
             s.Position = 0;
             try
             {
-                return (ListNode) formatter.Deserialize(s);
+                var options = new JsonSerializerOptions { IncludeFields = true };
+                var res = await JsonSerializer.DeserializeAsync(s, typeof(ListNode), options);
+                return (ListNode) res;
             }
             catch (Exception)
             {
@@ -52,15 +46,14 @@ namespace SerializationTest
         public async Task<ListNode> DeepCopy(ListNode head)
         {
             await using var stream = new MemoryStream();
-            var formatter = new BinaryFormatter
-            {
-                Context = new StreamingContext(StreamingContextStates.Clone),
-            };
+
+            var options = new JsonSerializerOptions { IncludeFields = true };
+            await JsonSerializer.SerializeAsync(stream, head, typeof(ListNode), options);
             
-            formatter.Serialize(stream, head);
             stream.Position = 0;
+            var res = await JsonSerializer.DeserializeAsync(stream, typeof(ListNode), options);
             
-            return (ListNode) formatter.Deserialize(stream);
+            return (ListNode) res;
         }
     }
 }
