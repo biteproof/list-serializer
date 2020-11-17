@@ -20,7 +20,9 @@ namespace SerializationTest
         {
             var newNode = new ListNode
             {
-                Previous = prevNode,
+                /* it's guaranteed that list provided as an argument to Serialize and DeepCopy 
+                function is consistent and doesn't contain any cycles */
+                // Previous = prevNode,
                 Next = prevNode.Next,
                 Data = payload
             };
