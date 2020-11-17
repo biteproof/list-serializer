@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SerializationTest.Models
+﻿namespace SerializationTest.Models
 {
     public  class ListNode
     {

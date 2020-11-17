@@ -1,5 +1,4 @@
-﻿using System;
-using SerializationTest.Models;
+﻿using SerializationTest.Models;
 
 namespace SerializationTest
 {
